@@ -9,8 +9,6 @@ on:
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
 
     steps:
       - name: Checkout del repositorio
@@ -24,18 +22,4 @@ jobs:
           cache: maven
 
       - name: Compilar y ejecutar todas las pruebas
-        run: |
-          mvn -B verify --no-transfer-progress --errors > maven.log 2>&1 || {
-            STATUS=$?
-            cat maven.log
-            git config user.name "github-actions[bot]"
-            git config user.email "github-actions[bot]@users.noreply.github.com"
-            git checkout -b ci-log
-            git add -f maven.log
-            if [ -d target/surefire-reports ]; then
-              git add -f target/surefire-reports/
-            fi
-            git commit -m "ci log failure"
-            git push -f origin ci-log
-            exit $STATUS
-          }
+        run: mvn -B verify --no-transfer-progress
